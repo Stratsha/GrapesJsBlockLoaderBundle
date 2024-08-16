@@ -1,0 +1,18 @@
+{
+  "name": "grapesjs-block-loader-bundle",
+  "version": "1.0.0",
+  "description": "Bundle to add custom blocks to the Mautic GrapesJS Builder",
+  "license": "MIT",
+  "scripts": {
+    "build": "grapesjs-cli build",
+    "start": "grapesjs-cli serve"
+  },
+  "devDependencies": {
+    "grapesjs": "^0.20.4",
+    "grapesjs-cli": "^3.0.1"
+  },
+  "main": "Assets/dist/index.js",
+  "files": [
+    "Assets/dist/"
+  ]
+}
