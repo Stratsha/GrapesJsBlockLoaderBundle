@@ -93,7 +93,7 @@ const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
                         reject(new Error(`Script load error for ${url}`))
                     };
                     document.body.appendChild(script);
-                } );
+                } ).catch( err => console.log( err ) );
             } else {
                 const bm = editor.BlockManager;
                 if ( window.CustomBlockLoaderNamespace.removeDefaults ) {
