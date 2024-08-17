@@ -1,6 +1,6 @@
 import grapesjs from 'grapesjs';
 
-// declare type for window so TS will not complain during compiling
+// declare type for window so ts will not complain during compiling
 declare global {
     interface Window {
         MauticGrapesJsPlugins: object[];
@@ -12,11 +12,12 @@ declare global {
 
 window.CustomBlockLoaderNamespace = window.CustomBlockLoaderNamespace || {};
 
-const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
-    editor.on('load', () => {
+const GrapesJsBlockLoader: grapesjs.Plugin = ( editor ) => {
+    editor.on( 'load', () => {
         let themePath:any = '';
         let editorType = '';
         
+        // email or page builder?
         if ( window.id !== null && window.id[0] !== null && typeof window.id[0] !== 'undefined' ) {
             if ( window.id[0].id === 'page_sessionId' ) {
                 editorType = 'page';
@@ -33,6 +34,7 @@ const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
             }
         }
         
+        // get the theme path
         if ( window.Mautic !== null && window.Mautic.builderTheme !== null) {
             themePath = window.Mautic.builderTheme;
         } else {
@@ -45,7 +47,7 @@ const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
                         if ( parentOfThemeSelectedBtn !== null ) {
                             let themeHeading = parentOfThemeSelectedBtn.querySelector( 'a.select-theme-link.btn.btn-default.hide' );
                             if ( themeHeading !== null ) {
-                                if ( themeHeading instanceof HTMLElement) {
+                                if ( themeHeading instanceof HTMLElement ) {
                                     themePath = themeHeading.dataset.theme;
                                 }
                             }
@@ -67,34 +69,38 @@ const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
                 scriptId = `${themePath}-email`;
             }
             
+            // test if script is already injected
             const injectedScript = document.getElementById( scriptId );
             if ( injectedScript === null ) {
+                // load and inject script
                 console.log( 'Will try to load: ' + url );
                 
-                return new Promise( (resolve, reject) => {
-                    let script  = document.createElement('script');
+                return new Promise( ( resolve, reject ) => {
+                    let script  = document.createElement( 'script' );
                     script.type = 'text/javascript';
                     script.charset = 'utf-8';
                     script.async = true;
                     script.id = scriptId;
                     script.src = url;
-                    script.onload = function () {
-                        resolve(script);
+                    script.onload = () => {
+                        resolve( script );
                         const bm = editor.BlockManager;
+                        // remove default blocks
                         if ( window.CustomBlockLoaderNamespace.removeDefaults ) {
                             bm.getAll().reset();
                         }
-                        
+                        // add custom blocks
                         for ( const id in window.CustomBlockLoaderNamespace.blocks ) {
                             bm.add( id, window.CustomBlockLoaderNamespace.blocks[id] );
                         }
                     };
-                    script.onerror = function () {
-                        reject(new Error(`Script load error for ${url}`))
+                    script.onerror = () => {
+                        reject( new Error(`Script load error for ${url}`) );
                     };
-                    document.body.appendChild(script);
-                } ).catch( err => console.log( err ) );
+                    document.body.appendChild( script );
+                } ).catch( err => console.log( err.message ) );
             } else {
+                // script is already injected, just remove/add blocks
                 const bm = editor.BlockManager;
                 if ( window.CustomBlockLoaderNamespace.removeDefaults ) {
                     bm.getAll().reset();
@@ -109,9 +115,9 @@ const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
 }
 
 // register the plugin globally so Mautic-GrapesJS can find it during initialization
-if (!window.MauticGrapesJsPlugins) window.MauticGrapesJsPlugins = [];
-window.MauticGrapesJsPlugins.push({
+if ( !window.MauticGrapesJsPlugins ) window.MauticGrapesJsPlugins = [];
+window.MauticGrapesJsPlugins.push( {
     name: 'GrapesJsBlockLoader',
     plugin: GrapesJsBlockLoader,
     context: ['page', 'email-mjml', 'email-html'] // options: [page|email-mjml|email-html]
-})
+} );
