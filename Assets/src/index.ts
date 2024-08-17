@@ -17,6 +17,8 @@ const GrapesJsBlockLoader: grapesjs.Plugin = ( editor ) => {
         let themePath:any = '';
         let editorType = '';
         
+        console.dir(window);
+        
         // email or page builder?
         if ( window.id !== null && window.id[0] !== null && typeof window.id[0] !== 'undefined' ) {
             if ( window.id[0].id === 'page_sessionId' ) {
@@ -63,53 +65,44 @@ const GrapesJsBlockLoader: grapesjs.Plugin = ( editor ) => {
             let scriptId = '';
             if ( editorType === 'page' ) {
                 url = `/themes/${themePath}/blocks/blocks-page.js`;
-                scriptId = `${themePath}-page`;
             } else if ( editorType = 'email' ) {
                 url = `/themes/${themePath}/blocks/blocks-email.js`;
-                scriptId = `${themePath}-email`;
             }
             
-            // test if script is already injected
-            const injectedScript = document.getElementById( scriptId );
-            if ( injectedScript === null ) {
-                // load and inject script
-                console.log( 'Will try to load: ' + url );
-                
-                return new Promise( ( resolve, reject ) => {
-                    let script  = document.createElement( 'script' );
-                    script.type = 'text/javascript';
-                    script.charset = 'utf-8';
-                    script.async = true;
-                    script.id = scriptId;
-                    script.src = url;
-                    script.onload = () => {
-                        resolve( script );
-                        const bm = editor.BlockManager;
-                        // remove default blocks
-                        if ( window.CustomBlockLoaderNamespace.removeDefaults ) {
-                            bm.getAll().reset();
-                        }
-                        // add custom blocks
-                        for ( const id in window.CustomBlockLoaderNamespace.blocks ) {
-                            bm.add( id, window.CustomBlockLoaderNamespace.blocks[id] );
-                        }
-                    };
-                    script.onerror = () => {
-                        reject( new Error(`Script load error for ${url}`) );
-                    };
-                    document.body.appendChild( script );
-                } ).catch( err => console.log( err.message ) );
-            } else {
-                // script is already injected, just remove/add blocks
-                const bm = editor.BlockManager;
-                if ( window.CustomBlockLoaderNamespace.removeDefaults ) {
-                    bm.getAll().reset();
-                }
-                
-                for ( const id in window.CustomBlockLoaderNamespace.blocks ) {
-                    bm.add( id, window.CustomBlockLoaderNamespace.blocks[id] );
-                }
+            // test if script is already injected, remove if so
+            const injectedScript = document.getElementById( 'injectedBlocksScript' );
+            if ( injectedScript !== null ) {
+                injectedScript.remove();
             }
+            
+            // load and inject script
+            console.log( 'Will try to load: ' + url );
+            
+            return new Promise( ( resolve, reject ) => {
+                let script  = document.createElement( 'script' );
+                script.type = 'text/javascript';
+                script.charset = 'utf-8';
+                script.async = true;
+                script.id = 'injectedBlocksScript';
+                script.src = url;
+                script.onload = () => {
+                    resolve( script );
+                    const bm = editor.BlockManager;
+                    // remove default blocks
+                    if ( window.CustomBlockLoaderNamespace.removeDefaults ) {
+                        bm.getAll().reset();
+                    }
+                    // add custom blocks
+                    for ( const id in window.CustomBlockLoaderNamespace.blocks ) {
+                        bm.add( id, window.CustomBlockLoaderNamespace.blocks[id] );
+                    }
+                };
+                script.onerror = () => {
+                    reject( new Error(`Script load error for ${url}`) );
+                };
+                document.body.appendChild( script );
+            } ).catch( err => console.log( err.message ) );
+            
         }
     });
 }
