@@ -17,8 +17,6 @@ const GrapesJsBlockLoader: grapesjs.Plugin = ( editor ) => {
         let themePath:any = '';
         let editorType = '';
         
-        console.dir(window);
-        
         // email or page builder?
         if ( window.id !== null && window.id[0] !== null && typeof window.id[0] !== 'undefined' ) {
             if ( window.id[0].id === 'page_sessionId' ) {
@@ -89,12 +87,17 @@ const GrapesJsBlockLoader: grapesjs.Plugin = ( editor ) => {
                     resolve( script );
                     const bm = editor.BlockManager;
                     // remove default blocks
-                    if ( window.CustomBlockLoaderNamespace.removeDefaults ) {
+                    if ( window.CustomBlockLoaderNamespace.removeDefaults === true ) {
                         bm.getAll().reset();
                     }
                     // add custom blocks
                     for ( const id in window.CustomBlockLoaderNamespace.blocks ) {
-                        bm.add( id, window.CustomBlockLoaderNamespace.blocks[id] );
+                        if ( typeof id == 'string' ) {
+                            if ( window.CustomBlockLoaderNamespace.blocks[id].label !== null && window.CustomBlockLoaderNamespace.blocks[id].label !== 'undefined' && typeof window.CustomBlockLoaderNamespace.blocks[id].label == 'string' &&
+                                window.CustomBlockLoaderNamespace.blocks[id].content !== null && window.CustomBlockLoaderNamespace.blocks[id].content !== 'undefined' && typeof window.CustomBlockLoaderNamespace.blocks[id].content == 'string' ) {
+                                bm.add( id, window.CustomBlockLoaderNamespace.blocks[id] );
+                            }
+                        }
                     }
                 };
                 script.onerror = () => {
