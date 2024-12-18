@@ -1,4 +1,5 @@
 import grapesjs from 'grapesjs';
+import { IBlockAttributes, IBlockItem } from './interfaces';
 
 // declare type for window so ts will not complain during compiling
 declare global {
@@ -74,7 +75,7 @@ const GrapesJsBlockLoader: grapesjs.Plugin = ( editor ) => {
             }
             
             // load and inject script
-            console.log( 'Will try to load: ' + url );
+            // console.log( 'Will try to load: ' + url );
             
             return new Promise( ( resolve, reject ) => {
                 let script  = document.createElement( 'script' );
@@ -93,10 +94,8 @@ const GrapesJsBlockLoader: grapesjs.Plugin = ( editor ) => {
                     // add custom blocks
                     for ( const id in window.CustomBlockLoaderNamespace.blocks ) {
                         if ( typeof id == 'string' ) {
-                            if ( window.CustomBlockLoaderNamespace.blocks[id].label !== null && window.CustomBlockLoaderNamespace.blocks[id].label !== 'undefined' && typeof window.CustomBlockLoaderNamespace.blocks[id].label == 'string' &&
-                                window.CustomBlockLoaderNamespace.blocks[id].content !== null && window.CustomBlockLoaderNamespace.blocks[id].content !== 'undefined' && typeof window.CustomBlockLoaderNamespace.blocks[id].content == 'string' ) {
-                                bm.add( id, window.CustomBlockLoaderNamespace.blocks[id] );
-                            }
+                            const blockItem: IBlockItem = window.CustomBlockLoaderNamespace.blocks[id];
+                            bm.add( id, blockItem );
                         }
                     }
                 };
