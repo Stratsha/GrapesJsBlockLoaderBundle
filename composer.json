@@ -1,10 +1,11 @@
 {
-  "name": "mautic/grapesjs-block-loader-bundle",
-  "description": "Bundle to add custom blocks to the Mautic GrapesJS Builder",
-  "type": "mautic-plugin",
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "extra": {
-    "install-directory-name": "GrapesJsBlockLoaderBundle"
-  }
+	"name": "stratsha/revue-militaire-suisse-mautic-grapesjs-sections",
+	"description": "Bundle to add custom blocks to the Mautic GrapesJS Builder",
+	"type": "mautic-plugin",
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"extra": {
+		"install-directory-name": "GrapesJsBlockLoaderBundle"
+	}
 }
+

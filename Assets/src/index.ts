@@ -84,22 +84,45 @@ const GrapesJsBlockLoader: grapesjs.Plugin = ( editor ) => {
                 script.async = true;
                 script.id = 'injectedBlocksScript';
                 script.src = url;
-                script.onload = () => {
+                script.onload = async () => {
                     resolve( script );
                     const bm = editor.BlockManager;
                     // remove default blocks
                     if ( window.CustomBlockLoaderNamespace.removeDefaults === true ) {
                         bm.getAll().reset();
                     }
+                    const templates: Record<string, string> = {}
+                    for ( const id in window.CustomBlockLoaderNamespace.templates ) {
+                        const file = window.CustomBlockLoaderNamespace.templates[id];
+                        if ( typeof file == 'string' ) {
+                            // load template file
+                            try {
+                                const response = await fetch( file );
+                                if (response.ok) {
+                                    templates[id] = await response.text();
+                                }
+                            } catch (e) {
+                                console.error( `Error fetching template file: ${file}`, e );
+                                continue;
+                            }
+                        }
+                    }
                     // add custom blocks
                     for ( const id in window.CustomBlockLoaderNamespace.blocks ) {
                         if ( typeof id == 'string' ) {
+                            if ('templateFile' in window.CustomBlockLoaderNamespace.blocks[id] && typeof window.CustomBlockLoaderNamespace.blocks[id].templateFile === 'string') {
+                                window.CustomBlockLoaderNamespace.blocks[id].content = templates[window.CustomBlockLoaderNamespace.blocks[id].templateFile] || window.CustomBlockLoaderNamespace.blocks[id].content; 
+                            }
+                            delete window.CustomBlockLoaderNamespace.blocks[id].templateFile; // remove template from block item
+
                             const blockItem: IBlockItem = window.CustomBlockLoaderNamespace.blocks[id];
+                            console.log(blockItem);
+
                             bm.add( id, blockItem );
                         }
                     }
                 };
-                script.onerror = () => {
+                script.onerror = (e) => {
                     reject( new Error(`Script load error for ${url}`) );
                 };
                 document.body.appendChild( script );
