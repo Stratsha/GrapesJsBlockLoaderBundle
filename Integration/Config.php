@@ -7,7 +7,6 @@ namespace MauticPlugin\GrapesJsBlockLoaderBundle\Integration;
 use Mautic\IntegrationsBundle\Exception\IntegrationNotFoundException;
 use Mautic\IntegrationsBundle\Helper\IntegrationsHelper;
 use Mautic\PluginBundle\Entity\Integration;
-use MauticPlugin\GrapesJsBlockLoaderBundle\Integration\GrapesJsBlockLoaderIntegration;
 
 class Config
 {
