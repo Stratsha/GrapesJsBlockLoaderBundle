@@ -138,5 +138,9 @@ if (!window.MauticGrapesJsPlugins) window.MauticGrapesJsPlugins = [];
 window.MauticGrapesJsPlugins.push({
 	name: 'GrapesJsBlockLoader',
 	plugin: GrapesJsBlockLoader,
-	context: ['page', 'email-mjml', 'email-html'], // options: [page|email-mjml|email-html]
+	context: [
+		// 'page',
+		'email-mjml',
+		// 'email-html',
+	], // options: [page|email-mjml|email-html]
 });
