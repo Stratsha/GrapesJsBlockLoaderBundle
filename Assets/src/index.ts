@@ -13,8 +13,11 @@ declare global {
 
 window.CustomBlockLoaderNamespace = window.CustomBlockLoaderNamespace || {};
 
+console.log('test');
 const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
+	console.log('test1');
 	editor.on('load', () => {
+		console.log('test2');
 		let themePath: any = '';
 		let editorType = '';
 
@@ -151,3 +154,4 @@ window.MauticGrapesJsPlugins.push({
 		// 'email-html',
 	], // options: [page|email-mjml|email-html]
 });
+console.log(window.MauticGrapesJsPlugins);
