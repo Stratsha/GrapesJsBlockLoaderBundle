@@ -16,6 +16,7 @@ window.CustomBlockLoaderNamespace = window.CustomBlockLoaderNamespace || {};
 console.log('test');
 const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
 	console.log('test1');
+	console.log(editor);
 	editor.on('load', () => {
 		console.log('test2');
 		let themePath: any = '';
