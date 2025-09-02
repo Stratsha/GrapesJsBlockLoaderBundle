@@ -14,9 +14,7 @@ declare global {
 window.CustomBlockLoaderNamespace = window.CustomBlockLoaderNamespace || {};
 
 const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
-	console.log('called 1');
 	editor.on('load', () => {
-		console.log('called 2');
 		let themePath: any = '';
 		let editorType = '';
 
@@ -65,9 +63,9 @@ const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
 			let url = '';
 			let scriptId = '';
 			if (editorType === 'page') {
-				url = `/themes/${themePath}/blocks/blocks-page.js`;
+				url = `themes/${themePath}/blocks/blocks-page.js`;
 			} else if ((editorType = 'email')) {
-				url = `/themes/${themePath}/blocks/blocks-email.js`;
+				url = `themes/${themePath}/blocks/blocks-email.js`;
 			}
 
 			// test if script is already injected, remove if so
@@ -75,9 +73,6 @@ const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
 			if (injectedScript !== null) {
 				injectedScript.remove();
 			}
-
-			// load and inject script
-			// console.log( 'Will try to load: ' + url );
 
 			return new Promise((resolve, reject) => {
 				let script = document.createElement('script');
@@ -125,7 +120,19 @@ const GrapesJsBlockLoader: grapesjs.Plugin = (editor) => {
 					}
 				};
 				script.onerror = (e) => {
-					reject(new Error(`Script load error for ${url}`));
+					console.error(`Primary script load failed for ${url}, trying absolute path fallback`);
+					// Try with absolute path as fallback
+					let fallbackScript = document.createElement('script');
+					fallbackScript.type = 'text/javascript';
+					fallbackScript.charset = 'utf-8';
+					fallbackScript.async = true;
+					fallbackScript.id = 'injectedBlocksScriptFallback';
+					fallbackScript.src = `/${url}`;
+					fallbackScript.onload = script.onload;
+					fallbackScript.onerror = (fallbackError) => {
+						reject(new Error(`Script load error for both ${url} and /${url}`));
+					};
+					document.body.appendChild(fallbackScript);
 				};
 				document.body.appendChild(script);
 			}).catch((err) => console.log(err.message));
