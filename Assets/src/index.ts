@@ -151,7 +151,7 @@ window.MauticGrapesJsPlugins.push({
 	plugin: GrapesJsBlockLoader,
 	context: [
 		// 'page',
-		'email-mjml',
+		// 'email-mjml',
 		// 'email-html',
 	], // options: [page|email-mjml|email-html]
 });
